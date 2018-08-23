@@ -1,4 +1,4 @@
-# AiPowered Tools Library - Open Source
+# AiPoweredTools Library - Open Source
 
 ## Who are these tools for?
 
