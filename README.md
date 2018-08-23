@@ -12,7 +12,7 @@
 ---
 ## Contributing to this Project
 
-* somehow you will be able to, it is undefined as of yet.
+* Somehow you will be able to, it is undefined as of yet.
 
 ---
 ## Feedback
