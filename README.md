@@ -7,7 +7,7 @@
 ---
 ## Documentation and References
 
-* For Learning how to use this library within your own code please see the [Documentation](./docs/getting_started.md) pages.
+* For Learning how to use this library within your own code please see the [Documentation](./docs/getting_started.md) page.
 
 ---
 ## Contributing to this Project
