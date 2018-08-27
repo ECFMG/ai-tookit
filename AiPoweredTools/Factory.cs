@@ -23,38 +23,37 @@ namespace AiPoweredTools
 
         internal static ISpeechServiceStrategy CreateService(SpeechServiceType type)
         {
+            string secretOne;
+            string secretTwo;
+            string secretThree;
+
             switch (type)
             {
                 case SpeechServiceType.aws:
-                    string accessKey;
-                    string secretAccessKey;
-                    string regionEndpointName;
                     if (ConfigurationManager.GetSection("awsConfig") is NameValueCollection awsSettings)
                     {
-                        accessKey = awsSettings["accessKey"];
-                        secretAccessKey = awsSettings["secretAccessKey"];
-                        regionEndpointName = awsSettings["region"];
+                        secretOne = awsSettings["accessKey"];
+                        secretTwo = awsSettings["secretAccessKey"];
+                        secretThree = awsSettings["region"];
                     }
                     else
                     {
                         throw new InvalidCredentialException();
                     }
-                    var s3Client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.GetBySystemName(regionEndpointName));
-                    var atClient = new AmazonTranscribeServiceClient(accessKey, secretAccessKey, RegionEndpoint.GetBySystemName(regionEndpointName));
+                    var s3Client = new AmazonS3Client(secretOne, secretTwo, RegionEndpoint.GetBySystemName(secretThree));
+                    var atClient = new AmazonTranscribeServiceClient(secretOne, secretTwo, RegionEndpoint.GetBySystemName(secretThree));
                     var awsBucketName = Guid.NewGuid().ToString();
                     return new Aws(s3Client, atClient, awsBucketName);
 
 
                 case SpeechServiceType.google:
-                    string credentialPath;
-                    string projectId;
                     if (ConfigurationManager.GetSection("googleConfig") is NameValueCollection googleSettings)
                     {
-                        credentialPath = googleSettings["pathToCredentialsFile"];
-                        projectId = googleSettings["projectId"];
+                        secretOne = googleSettings["pathToCredentialsFile"];
+                        secretTwo = googleSettings["projectId"];
                         if (Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") == null)
                         {
-                            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
+                            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", secretOne);
                         }
                     }
                     else
@@ -63,22 +62,20 @@ namespace AiPoweredTools
                     }
                     var googleClient = StorageClient.Create();
                     var googBucketName = Guid.NewGuid().ToString();
-                    return new Goog( googleClient, googBucketName,  projectId);
+                    return new Goog( googleClient, googBucketName, secretTwo);
 
 
                 case SpeechServiceType.ibm:
-                    string username;
-                    string password;
                     if (ConfigurationManager.GetSection("ibmConfig") is NameValueCollection ibmSettings)
                     {
-                        username = ibmSettings["username"];
-                        password = ibmSettings["password"];
+                        secretOne = ibmSettings["username"];
+                        secretTwo = ibmSettings["password"];
                     }
                     else
                     {
                         throw new InvalidCredentialException();
                     }
-                    var authBytes = Encoding.UTF8.GetBytes(username + ":" + password);
+                    var authBytes = Encoding.UTF8.GetBytes(secretOne + ":" + secretTwo);
                     var base64EncryptedCredentials = Convert.ToBase64String(authBytes);
                     var ibmClient = new HttpClient();
                     ibmClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncryptedCredentials);
@@ -86,35 +83,30 @@ namespace AiPoweredTools
 
 
                 case SpeechServiceType.azure:
-                    string apiKey;
-                    string apiRegion;
                     if (ConfigurationManager.GetSection("azureConfig") is NameValueCollection azureSettings)
                     {
-                        apiKey = azureSettings["subscriptionKey"];
-                        apiRegion = azureSettings["region"];
+                        secretOne = azureSettings["subscriptionKey"];
+                        secretTwo = azureSettings["region"];
                     }
                     else
                     {
                         throw new InvalidCredentialException();
                     }
-                    return new Azure(apiKey, apiRegion);
+                    return new Azure(secretOne, secretTwo);
 
 
                 case SpeechServiceType.azureAdv:
-                    string subscriptionKey;
-                    string accountId;
-                    string location;
                     if (ConfigurationManager.GetSection("azureAdvanced") is NameValueCollection azureAdvSettings)
                     {
-                        subscriptionKey = azureAdvSettings["subscriptionKey"];
-                        accountId = azureAdvSettings["accountId"];
-                        location = azureAdvSettings["location"];
+                        secretOne = azureAdvSettings["subscriptionKey"];
+                        secretTwo = azureAdvSettings["accountId"];
+                        secretThree = azureAdvSettings["location"];
                     }
                     else
                     {
                         throw new InvalidCredentialException();
                     }
-                    return new AzureAdvanced(subscriptionKey, accountId, location);
+                    return new AzureAdvanced(secretOne, secretTwo, secretThree);
 
 
                 default:
