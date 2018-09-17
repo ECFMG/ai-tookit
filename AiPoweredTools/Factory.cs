@@ -16,13 +16,14 @@ using Google.Cloud.Storage.V1;
 
 namespace AiPoweredTools
 {
-    internal static class Factory // Auth class implementation/Extension here? Can instantiate basic container variables and use them for all switch statements? 
+    internal static class Factory 
     {
 
         #region SpeechServices
 
         internal static ISpeechServiceStrategy CreateService(SpeechServiceType type)
         {
+
             string secretOne;
             string secretTwo;
             string secretThree;
